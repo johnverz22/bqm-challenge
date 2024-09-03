@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="images/favicon.ico">
+    <title>Control</title>
+    <link rel="stylesheet" href="css/control.css">
+</head>
+
+<body>
+    <main>
+        <section id="reference">
+            <h1></h1>
+        </section>
+        <section id="buttons">
+            <button id="btn-start">Start</button>
+            <button class="onplay" id="correct">Correct</button>
+            <button class="onplay" id="wrong">Wrong / Pass</button>
+            <button class="onplay" id="pass">New Player</button>
+        </section>
+        <aside id="rank-list">
+            <div id="players">
+                <h1>Scores</h1>
+                <div class="tbl-content">
+                    <table id="score-table" cellpadding="0" cellspacing="0" border="0">
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </aside>
+        <div id="start-form">
+            <div class="wrapper">
+                <h1>Verse Location Challenge</h1>
+                <form id="name-form"></form>
+                <div class="form-group">
+                    <input type="text" id="name" name="name" required placeholder="Type player name...">
+                </div>
+                <button id="btn-set" type="submit">Set New Player</button>
+                </form>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        const ws = new WebSocket(`ws://${window.location.hostname}:3000`);
+        const reference = document.getElementById('reference').querySelector('h1');
+        const startForm = document.getElementById('start-form');
+        const btnSection = document.getElementById('buttons');
+        const btnSet = document.getElementById('btn-set');
+        const btnStart = document.getElementById('btn-start');
+        const btnCorrect = document.getElementById('correct');
+        const btnWrong = document.getElementById('wrong');
+        const btnReset = document.getElementById('pass');
+        const playerName = document.getElementById('name');
+        const scoreTable = document.getElementById('score-table');
+
+
+        const verses = [];
+        const players = [];
+        var currentPlayer = -1;
+        var gameStarted = false;
+        var timerLimit = 0;
+        currentVerse = 0;
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if(data.type === 'timesup') {
+                reference.innerHTML = "Time's Up!"
+                btnSection.querySelectorAll('#correct, #wrong').forEach(btn => {
+                    btn.style.display = "none";
+                });
+
+            } 
+        };
+
+        function generateId() {
+            return Math.random().toString(36).substr(2, 9);
+        }
+
+        function nextVerse() {
+            currentVerse++;
+            reference.textContent = verses[currentVerse].reference;
+            sendVerse();
+        }
+
+        function sendVerse(){
+            const verse = verses[currentVerse].text.replace(/\[(.*?)\]/g, '<i>$1</i>');
+            ws.send(JSON.stringify({ type: "verse", content: verse }));
+        }
+
+
+        async function getVerses() {
+            try {
+                const response = await fetch('/get-verses');
+                const data = await response.json();
+                verses.push(...data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function getTimerLimit() {
+            try {
+                const response = await fetch('/get-timer');
+                const data = await response.json();
+                timerLimit = data.timerLength;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function setGame() {
+            gameStarted = true;
+            players.push({ id: generateId(), name: playerName.value, score: 0 });
+            playerName.value = '';
+            currentPlayer++;
+
+            await getVerses();
+            await getTimerLimit();
+            reference.textContent = "Click Start"
+
+            //send timer limit
+            ws.send(JSON.stringify({ type: "timerLimit", content: timerLimit }));
+
+            btnSection.querySelectorAll('.onplay').forEach(btn => {
+                btn.style.display = "none";
+            });
+            btnStart.style.display = "block";
+
+            //send inital greeting
+            const greeting = `<p class='greeting'>Get ready <strong>${players[currentPlayer].name}</strong></p>`;
+            ws.send(JSON.stringify({ type: "greeting", content: greeting, player: players[currentPlayer].name }));
+
+            updateScoreBoard();
+        }
+
+        function updateScoreBoard() {
+            const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
+            scoreTable.querySelector('tbody').innerHTML = '';
+            let count = 0;
+            sortedPlayers.forEach(player => {
+                const row = document.createElement('tr');
+                const rankCell = document.createElement('td');
+                const nameCell = document.createElement('td');
+                const scoreCell = document.createElement('td');
+
+                if (player.id === players[currentPlayer].id)
+                    row.classList.add('current');
+
+                rankCell.textContent = ++count;
+                nameCell.textContent = player.name;
+                scoreCell.textContent = player.score;
+
+                row.appendChild(rankCell);
+                row.appendChild(nameCell);
+                row.appendChild(scoreCell);
+                scoreTable.querySelector('tbody').appendChild(row);
+            });
+        }
+
+
+        function resetErrors() {
+            const formGroup = startForm.querySelector('.form-group');
+            playerName.classList.remove('error');
+            const errorText = formGroup.querySelector('.error');
+            if (errorText) {
+                formGroup.removeChild(errorText);
+            }
+        }
+
+        function isValidStartForm() {
+            resetErrors();
+            if (playerName.value.trim() === '') {
+                console.log("error");
+                const formGroup = startForm.querySelector('.form-group');
+                const errorText = document.createElement('p');
+                errorText.textContent = 'Please enter a player name.';
+                errorText.classList.add('error');
+                formGroup.appendChild(errorText);
+                playerName.classList.add('error');
+                return false;
+            } else {
+                playerName.classList.remove('error');
+                const errorText = startForm.querySelector('.error');
+                if (errorText) {
+                    startForm.removeChild(errorText);
+                }
+                startForm.style.display = "none";
+                return true;
+            }
+        }
+
+        btnCorrect.addEventListener('click', () => {
+            players[currentPlayer].score++;
+            nextVerse();
+            updateScoreBoard();
+        });
+
+        btnWrong.addEventListener('click', () => {
+            nextVerse();
+        });
+
+        btnReset.addEventListener('click', () => {
+            startForm.style.display = "flex";
+        });
+
+        btnStart.addEventListener('click', () => {
+            btnSection.querySelectorAll('.onplay').forEach(btn => {
+                btn.style.display = "block";
+            });
+            btnStart.style.display = "none";
+            nextVerse();
+            ws.send(JSON.stringify({ type: "start"}));
+        });
+
+        btnSet.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (isValidStartForm()) {
+                setGame();
+            }
+        });
+
+        window.onload = () => {
+            if (!gameStarted) {
+                startForm.style.display = "flex";
+            }
+
+            fetch('/get-timer')
+                .then(response => response.json())
+                .then(data => {
+                    timerLimit = data.timerLength;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        };
+
+        window.onbeforeunload = function () {
+            return "";
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;500&display=swap');
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+
+* {
+    margin: 0;
+}
+
+body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+}
+
+#bible_text {
+    padding: 0 170px;
+    font-size: 3rem;
+    height: 70%;
+    display:flex;
+}
+
+#bible_text p {
+    margin-top: auto;
+    margin-bottom: auto;
+    justify-content: center;
+    text-align: center;
+}
+
+
+/* for timer */
+/* Sets the containers height and width */
+.base-timer {
+    position: relative;
+    height: 150px;
+    width: 150px;
+}
+
+/* Removes SVG styling that would hide the time label */
+.base-timer__circle {
+    fill: none;
+    stroke: none;
+}
+
+/* The SVG path that displays the timer's progress */
+.base-timer__path-elapsed {
+    stroke-width: 7px;
+    stroke: grey;
+}
+
+.base-timer__label {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+}
+
+.base-timer__path-remaining {
+    stroke-width: 7px;
+    stroke-linecap: round;
+    transform: rotate(90deg);
+    transform-origin: center;
+    transition: 1s linear all;
+    fill-rule: nonzero;
+    stroke: currentColor;
+}
+
+.base-timer__path-remaining.green {
+    color: hsl(162deg 100% 33%);
+}
+
+.base-timer__path-remaining.orange {
+    color: rgb(255, 173, 21);
+}
+
+.base-timer__path-remaining.red {
+    color: #FF4F6D;
+}
+
+.base-timer__svg {
+    /* Flips the svg and makes the animation to move left-to-right */
+    transform: scaleX(-1);
+}
+
+p.greeting{
+    font-size: 4rem;
+}
+
+p.greeting strong{
+    background: -webkit-linear-gradient(320deg,
+    hsl(192deg 100% 34%) 0%,
+    hsl(191deg 100% 34%) 11%,
+    hsl(189deg 100% 33%) 22%,
+    hsl(186deg 100% 33%) 33%,
+    hsl(183deg 100% 32%) 44%,
+    hsl(180deg 100% 31%) 56%,
+    hsl(175deg 100% 31%) 67%,
+    hsl(171deg 100% 32%) 78%,
+    hsl(167deg 100% 32%) 89%,
+    hsl(162deg 100% 33%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;   
+    display: block   ;
+}

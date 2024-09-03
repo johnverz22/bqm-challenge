@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="images/favicon.ico">
+    <title>Verse Location Challenge</title>
+    <link rel="stylesheet" href="css/style.css">
+
+<body>
+    <main>
+        <section id="bible_text">
+            <p>Welcome to Verse-Location Challenge!</p>
+        </section>
+        <section id="timer">
+        </section>
+    </main>
+
+    <script>
+        const ws = new WebSocket(`ws://${window.location.hostname}:3000`);
+        const verses = [];
+        var timerLimit = 0;
+        var timeLeft = 0;
+        var playerName = '';
+
+        const bibleText = document.getElementById('bible_text').querySelector('p');
+        const timerSection = document.getElementById('timer');
+
+
+        window.onbeforeunload = function () {
+            return "";
+        }
+
+        //Timer code
+        const FULL_DASH_ARRAY = 283;
+        const WARNING_THRESHOLD = 10;
+        const ALERT_THRESHOLD = 5;
+
+        const COLOR_CODES = {
+            info: {
+                color: "green"
+            },
+            warning: {
+                color: "orange",
+                threshold: WARNING_THRESHOLD
+            },
+            alert: {
+                color: "red",
+                threshold: ALERT_THRESHOLD
+            }
+        };
+
+        var timePassed = 0;
+        var timerInterval = null;
+        var remainingPathColor = COLOR_CODES.info.color;
+
+        function setTimer(){
+            timerSection.innerHTML = `
+                <div class="base-timer">
+                <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <g class="base-timer__circle">
+                    <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45" />
+                    <path
+                        id="base-timer-path-remaining"
+                        stroke-dasharray="283"
+                        class="base-timer__path-remaining ${remainingPathColor}"
+                        d="
+                        M 50, 50
+                        m -45, 0
+                        a 45,45 0 1,0 90,0
+                        a 45,45 0 1,0 -90,0
+                        "
+                    ></path>
+                    </g>
+                </svg>
+                <span id="base-timer-label" class="base-timer__label">
+                    ${formatTime(timeLeft)}
+                </span>
+                </div>
+            `;
+        }
+
+        setTimer();
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === 'verse') {
+                bibleText.innerHTML = data.content;
+            }
+
+            if (data.type === 'greeting') {
+                bibleText.innerHTML = data.content;
+                playerName = data.player;
+            }
+
+            if (data.type === 'timerLimit') {
+                timerLimit = data.content;
+                timeLeft = timerLimit;
+                timePassed = 0;
+                timerInterval = null;
+                remainingPathColor = COLOR_CODES.info.color;
+                setTimer();
+                document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
+
+            }
+
+            if (data.type === 'start') {
+                startTimer();
+            }
+        };
+
+
+
+        function onTimesUp() {
+            clearInterval(timerInterval);
+            //send signal to controller
+            ws.send(JSON.stringify({ type: "timesup" }));
+            bibleText.innerHTML = `<p class="greeting">Well played <strong>${playerName}</strong></p>`;
+
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timePassed = timePassed += 1;
+                timeLeft = timerLimit - timePassed;
+                document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
+                setCircleDasharray();
+                setRemainingPathColor(timeLeft);
+
+                if (timeLeft === 0) {
+                    onTimesUp();
+                }
+            }, 1000);
+        }
+
+        function formatTime(time) {
+            const minutes = Math.floor(time / 60);
+            let seconds = time % 60;
+
+            if (seconds < 10) {
+                seconds = `0${seconds}`;
+            }
+
+            return `${minutes}:${seconds}`;
+        }
+
+        function setRemainingPathColor(timeLeft) {
+            const { alert, warning, info } = COLOR_CODES;
+            if (timeLeft <= alert.threshold) {
+                document
+                    .getElementById("base-timer-path-remaining")
+                    .classList.remove(warning.color);
+                document
+                    .getElementById("base-timer-path-remaining")
+                    .classList.add(alert.color);
+            } else if (timeLeft <= warning.threshold) {
+                document
+                    .getElementById("base-timer-path-remaining")
+                    .classList.remove(info.color);
+                document
+                    .getElementById("base-timer-path-remaining")
+                    .classList.add(warning.color);
+            }
+        }
+
+        function calculateTimeFraction() {
+            const rawTimeFraction = timeLeft / timerLimit;
+            return rawTimeFraction - (1 / timerLimit) * (1 - rawTimeFraction);
+        }
+
+        function setCircleDasharray() {
+            const circleDasharray = `${(
+                calculateTimeFraction() * FULL_DASH_ARRAY
+            ).toFixed(0)} 283`;
+            document
+                .getElementById("base-timer-path-remaining")
+                .setAttribute("stroke-dasharray", circleDasharray);
+        }
+
+    </script>
+</body>
+
+</html>
