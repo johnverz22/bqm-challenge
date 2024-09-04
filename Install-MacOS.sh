@@ -37,6 +37,7 @@ chmod +x run.sh
 
 # Delete the current script
 rm -- "$0"
+rm -- "Install-Windows.bat"
 
 # Exit the script
 exit
