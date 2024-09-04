@@ -3,6 +3,7 @@ const path = require('path');
 const http = require('http');
 const WebSocket = require('ws');
 const sqlite3 = require('sqlite3').verbose();
+const figlet = require('figlet');
 
 const app = express();
 const server = http.createServer(app);
@@ -96,5 +97,16 @@ wss.on('connection', (ws) => {
 });
 
 server.listen(3000, () => {
-    console.log('Server is running on port 3000');
+		figlet('BQM', function(err, data) {
+			if (err) {
+				console.log('Something went wrong...');
+				console.dir(err);
+				return;
+			}
+			console.log(data);
+			console.log('Verse-location Challenge');
+			console.log('Application started...');
+			console.log('Do not close this window');
+		});
+		
 }); 

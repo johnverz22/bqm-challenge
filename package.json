@@ -12,6 +12,7 @@
   "dependencies": {
     "csv-parser": "^3.0.0",
     "express": "^4.19.2",
+    "figlet": "^1.7.0",
     "sqlite3": "^5.1.7",
     "ws": "^8.18.0"
   }

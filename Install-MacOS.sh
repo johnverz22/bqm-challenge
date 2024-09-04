@@ -11,17 +11,32 @@ fi
 echo "Installing dependencies..."
 npm install
 
-# Run the Node.js application
-echo "Starting the application..."
-node .
+# Check if npm install was successful
+if [ $? -ne 0 ]; then
+    echo "npm install failed. Please check the error messages above."
+    exit 1
+fi
 
-# Wait a moment for the server to start (adjust the delay as needed)
-sleep 5
 
-# Open the first Chrome window
-open -a "Google Chrome" "http://localhost:3000/control"
+# Create the run.sh file
+cat << 'EOF' > run.sh
+#!/bin/bash
 
-# Open the second Chrome window
-open -a "Google Chrome" "http://localhost:3000/"
+# Open the first Safari window
+open -a "Safari" "http://localhost:3000/control"
 
-echo "Deployment complete."
+# Open the second Safari window
+open -a "Safari" "http://localhost:3000/"
+EOF
+
+# Make the run.sh file executable
+chmod +x run.sh
+
+# Execute the run.sh file
+./run.sh
+
+# Delete the current script
+rm -- "$0"
+
+# Exit the script
+exit
