@@ -22,6 +22,8 @@ fi
 cat << 'EOF' > run.sh
 #!/bin/bash
 
+node .
+
 # Open the first Safari window
 open -a "Safari" "http://localhost:3000/control"
 
