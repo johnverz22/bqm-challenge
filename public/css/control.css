@@ -102,6 +102,7 @@ button.onplay {
 #buttons #pass {
     background-color: #0078B5;
     color: white;
+    display: none;
 }
 
 #buttons #pass:active {

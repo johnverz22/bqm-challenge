@@ -18,7 +18,7 @@
             <button id="btn-start">Start</button>
             <button class="onplay" id="correct">Correct</button>
             <button class="onplay" id="wrong">Wrong / Pass</button>
-            <button class="onplay" id="pass">New Player</button>
+            <button id="pass">New Player</button>
         </section>
         <aside id="rank-list">
             <div id="players">
@@ -75,6 +75,7 @@
                 btnSection.querySelectorAll('#correct, #wrong').forEach(btn => {
                     btn.style.display = "none";
                 });
+                btnReset.style.display = 'block';
 
             } 
         };
@@ -131,6 +132,7 @@
             btnSection.querySelectorAll('.onplay').forEach(btn => {
                 btn.style.display = "none";
             });
+            btnReset.style.display = "none";
             btnStart.style.display = "block";
 
             //send inital greeting
