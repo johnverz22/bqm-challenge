@@ -10,19 +10,31 @@
     <main>
         <table>
             <thead>
-                <th>Setting</th>
+                <th colspan="2">Setting</th>
                 <th>Save</th>
             </thead>
             <tbody>
                 <tr>
                     <td>
+                        Update coverage
+                    </td>
+                    <td>
                         <input class="file-upload" type="file" name="data" id="data">
                     </td>
                     <td>
-                        <button onclick="uploadCSV()">Save</button>
+                        <button onclick="uploadCSV()"> Save </button>
                     </td>
                 </tr>
-                
+                <tr>
+                    <td>Timer limit</td>
+                    <td><input type="number" name="timer"></td>
+                    <td><button onclick="saveTimerLimit()"> Save </button></td>
+                </tr>
+                <tr>
+                    <td>Number of verses per game</td>
+                    <td><input type="number" name="num-of-verses"></td>
+                    <td><button onclick="saveNumOfVerses()"> Save </button></td>
+                </tr>
             </tbody>
         </table>
     </main>

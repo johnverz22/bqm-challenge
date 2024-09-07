@@ -52,9 +52,9 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'viewer.html'));
 });
 
-app.get('/setting', (req, res) => {
-     res.sendFile(path.join(__dirname, 'public', 'setting.html'));
-});
+// app.get('/setting', (req, res) => {
+//      res.sendFile(path.join(__dirname, 'public', 'setting.html'));
+// });
 
 app.get('/upload-csv')
 

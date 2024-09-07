@@ -3,10 +3,10 @@ const csv = require('csv-parser');
 const sqlite3 = require('sqlite3').verbose();
 
 // Path to the CSV file
-const csvFilePath = 'acts.csv';
+const csvFilePath = 'file.csv';
 
 // Path to the SQLite database file
-const dbFilePath = 'scriptures.db';
+const dbFilePath = 'data.db';
 
 // Create a new SQLite database connection
 const db = new sqlite3.Database(dbFilePath);

@@ -64,10 +64,9 @@ button.onplay {
 }
 
 #buttons button {
-    padding: 15px 30px;
+    padding: 10px 30px;
     border: none;
     border-radius: 10px;
-    background-color: #f1f1f1;
     color: #333;
     font-size: 1.7rem;
     cursor: pointer;
@@ -170,16 +169,16 @@ tr.current td{
 }
 
 tr :first-child{
-    width: 10%;
+    width: 15%;
 }
 tr :nth-child(2){
-    width: 75%;
+    width: 65%;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 tr :nth-child(3){
-    width: 15%;
+    width: 20%;
 }
 
 

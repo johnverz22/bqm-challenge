@@ -86,11 +86,18 @@
 
         function nextVerse() {
             currentVerse++;
-            reference.textContent = verses[currentVerse].reference;
-            sendVerse();
+            if (verses[currentVerse]) {
+                reference.textContent = verses[currentVerse].reference;
+                sendVerse();
+            } else {
+                reference.textContent = "You reached the end of slide";
+            }
+
+            
         }
 
         function sendVerse(){
+            
             const verse = verses[currentVerse].text.replace(/\[(.*?)\]/g, '<i>$1</i>');
             ws.send(JSON.stringify({ type: "verse", content: verse }));
         }

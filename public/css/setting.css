@@ -1,8 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;500&display=swap');
+
 *,
 *::before,
 *::after {
     box-sizing: border-box;
+
 }
 
 
@@ -19,7 +21,7 @@ body {
 }
 
 
-main{
+main {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -31,19 +33,17 @@ table {
     width: 50%;
     table-layout: fixed;
     border-collapse: collapse;
-  }
+}
 
 
-th{
+th {
     color: #fff;
     line-height: 1.4;
     text-transform: uppercase;
     background-color: hsl(175deg 100% 31%);
     font-size: 2rem;
     padding: 24px 10px;
-    text-align: center;
-
-
+    text-align: left;
 }
 
 
@@ -53,7 +53,19 @@ td {
     vertical-align: middle;
     font-weight: 500;
     font-size: 1.5rem;
-    color: #fff;
+    /* background: -webkit-linear-gradient(320deg,
+            hsl(192deg 100% 34%) 0%,
+            hsl(191deg 100% 34%) 11%,
+            hsl(189deg 100% 33%) 22%,
+            hsl(186deg 100% 33%) 33%,
+            hsl(183deg 100% 32%) 44%,
+            hsl(180deg 100% 31%) 56%,
+            hsl(175deg 100% 31%) 67%,
+            hsl(171deg 100% 32%) 78%,
+            hsl(167deg 100% 32%) 89%,
+            hsl(162deg 100% 33%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; */
     border-bottom: solid 1px rgba(255, 255, 255, 0.1);
 }
 
@@ -62,43 +74,28 @@ tr.current td {
     background-color: rgba(255, 255, 255, 0.3);
 }
 
-tr :first-child {
-    width: 70%;
+td,
+th {
+    border: 1px solid hsl(175deg 100% 31%);
+    padding: 8px;
 }
 
-
-td, th{
-    border: 1px solid  hsl(175deg 100% 31%);; 
-            padding: 8px; 
-            text-align: center; 
-
+button {
+    padding: 7px 30px;
+    border: none;
+    border-radius: 10px;
+    color: #333;
+    font-size: 1.7rem;
+    cursor: pointer;
+    background-color: #00A674;
+    color: white;
 }
 
-
-        /* General button styles */
-        button, .file-upload {
-            background-color: hsl(162deg, 100%, 33%);
-            color: white; /* Text color */
-            border: none; /* Remove default border */
-            padding: 10px 20px; /* Button padding */
-            font-size: 16px; /* Font size */
-            border-radius: 5px; /* Rounded corners */
-            cursor: pointer; /* Cursor pointer on hover */
-            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
-        }
-
-        /* Button hover effect */
-        .button:hover, .file-upload:hover {
-            background-color: hsl(162deg, 80%, 28%); /* Darker shade on hover */
-        }
-
-        /* File upload styles */
-        .file-upload {
-            display: inline-block; /* Inline block to size like a button */
-            text-align: center; /* Center the text */
-        }
-
-        /* File input element hidden */
-        .file-upload input[type="file"] {
-            display: none; /* Hide default file input */
-        }
+input[type="number"] {
+    padding: 5px;
+    font-size: 1.5rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    width: 10rem;
+}
